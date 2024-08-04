@@ -1,0 +1,78 @@
+{{define "dashboard-custom/component-server"}}
+<div class="ui tiny server modal transition hidden">
+    <div class="header">新增伺服器</div>
+    <div class="content">
+        <form id="serverForm" class="ui form">
+            <input type="hidden" name="id">
+            <div class="field">
+                <label>名稱</label>
+                <input type="text" name="name" placeholder="伺服器名稱">
+            </div>
+            <div class="field">
+                <label>群組</label>
+                <input type="text" name="Tag" placeholder="伺服器群組">
+            </div>
+            <div class="field">
+                <label>排序</label>
+                <input type="number" name="DisplayIndex" placeholder="數值愈大愈靠前顯示">
+            </div>
+            <div class="secret field">
+                <label>密鑰</label>
+                <input type="text" name="secret">
+            </div>
+            <div class="field">
+                <div class="ui hideforguest checkbox">
+                    <input name="HideForGuest" type="checkbox" tabindex="0" class="hidden" />
+                    <label>對訪客隱藏</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui enableddns checkbox">
+                    <input name="EnableDDNS" type="checkbox" tabindex="0" />
+                    <label>啟用 DDNS</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui enableipv4 checkbox">
+                    <input name="EnableIPv4" type="checkbox" tabindex="0" />
+                    <label>啟用 DDNS IPv4</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui enableipv6 checkbox">
+                    <input name="EnableIpv6" type="checkbox" tabindex="0" />
+                    <label>啟用 DDNS IPv6</label>
+                </div>
+            </div>
+            <div class="field">
+                <label>DDNS 網域</label>
+                <input type="text" name="DDNSDomain" placeholder="DDNS 網域">
+            </div>
+            <div class="field">
+                <label>DDNS 設定名稱</label>
+                <input type="text" name="DDNSProfile" placeholder="DDNS 設定名稱">
+            </div>
+            <div class="field">
+                <label>備註</label>
+                <textarea name="Note"></textarea>
+            </div>
+            <div class="command field">
+                <label>Linux 安裝指令</label>
+                <div class="ui message">
+                    {{if .Conf.GRPCHost}}
+                    curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh -o nezha.sh && chmod
+                    +x nezha.sh && ./nezha.sh install_agent <code class="command">{{.Conf.GRPCHost}}</code> <code class="command">{{if .Conf.ProxyGRPCPort}}{{.Conf.ProxyGRPCPort}}{{else}}{{.Conf.GRPCPort}}{{end}}</code> <code class="command hostSecret"></code> <code class="command">{{if .Conf.TLS}}--tls{{end}}</code>
+                    {{else}}
+                    請先在設定頁面配置 : 未接入 CDN 的面板伺服器域名 / IP
+                    {{end}}
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <div class="ui negative button">取消</div>
+        <button class="ui positive main-primary-btn right labeled icon button">確定 <i class="checkmark icon"></i>
+        </button>
+    </div>
+</div>
+{{end}}

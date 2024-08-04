@@ -1,0 +1,35 @@
+{{define "dashboard-custom/error"}}
+{{template "dashboard-custom/header" .}}
+<div class="login nb-container">
+    <div class="ui center aligned grid">
+        <div class="column">
+            <h2 class="ui image header">
+                <img src="https://probe.quilt.com.tw/dashboard/logo.png" class="image" />
+                <div class="content">
+                    拒絕存取
+                </div>
+            </h2>
+            <div class="ui message">
+                <p id="error-message">
+                    {{.Msg}}
+                </p>
+                <a id="error-link" href="{{.Link}}">{{.Btn}}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "dashboard-custom/footer" .}}
+<script>
+    if (document.title.includes("该页面不存在")) {
+        document.title = "頁面不存在";
+    }
+    let error_message = document.getElementById("error-message");
+    if (error_message.innerText.includes("该页面内容可能已着陆火星")) {
+        error_message.innerText = "該頁面內容可能已著陸火星";
+    }
+    let error_link = document.getElementById("error-link");
+    if (error_link.innerText.includes("返回首页")) {
+        error_link.innerText = "返回首頁";
+    }
+</script>
+{{end}}

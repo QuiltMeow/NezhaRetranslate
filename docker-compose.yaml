@@ -1,0 +1,12 @@
+services:
+  dashboard:
+    image: ghcr.io/naiba/nezha-dashboard
+    restart: always
+    volumes:
+      - ./data:/dashboard/data
+      - ./static-custom/static:/dashboard/resource/static/custom:ro
+      - ./theme-custom/template:/dashboard/resource/template/theme-custom:ro
+      - ./dashboard-custom/template:/dashboard/resource/template/dashboard-custom:ro
+    ports:
+      - 8028:80
+      - 6555:6555

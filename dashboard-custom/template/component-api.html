@@ -1,0 +1,19 @@
+{{define "dashboard-custom/component-api"}}
+<div class="ui tiny api modal transition hidden">
+    <div class="header">產生 Token</div>
+    <div class="content">
+        <form id="apiForm" class="ui form">
+            <input type="hidden" name="id">
+            <div class="field">
+                <label>備註</label>
+                <textarea name="Note"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <div class="ui negative button">取消</div>
+        <button class="ui positive main-primary-btn right labeled icon button">確定 <i class="checkmark icon"></i>
+        </button>
+    </div>
+</div>
+{{end}}

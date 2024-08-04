@@ -1,0 +1,236 @@
+{{define "dashboard-custom/server"}}
+{{template "dashboard-custom/header" .}}
+{{template "dashboard-custom/menu" .}}
+<div class="nb-container">
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="right floated right aligned twelve wide column">
+                <button class="ui right labeled main-primary-btn icon button" onclick="batchEditServerGroup()"><i class="edit icon"></i> 批次修改伺服器群組
+                </button>
+                <button class="ui right labeled main-primary-btn icon button" onclick="batchDeleteServer()"><i class="trash icon"></i> 批次刪除伺服器
+                </button>
+                <button class="ui right labeled main-primary-btn icon button" onclick="addOrEditServer()"><i class="add icon"></i> 新增伺服器
+                </button>
+                <button class="ui right labeled main-primary-btn icon button" onclick="forceUpdate()"><i class="arrow alternate circle up outline icon"></i> 立即更新
+                </button>
+            </div>
+        </div>
+        <table id="server-table" class="ui very basic table">
+            <thead>
+                <tr>
+                    <th><button onclick="checkAllServer()" class="ui mini main-primary-btn button">全選</button></th>
+                    <th>ID (排序)</th>
+                    <th>名稱</th>
+                    <th>伺服器群組</th>
+                    <th>IP</th>
+                    <th>版本號碼</th>
+                    <th>對訪客隱藏</th>
+                    <th>啟用 DDNS</th>
+                    <th>啟用 DDNS IPv4</th>
+                    <th>啟用 DDNS IPv6</th>
+                    <th>DDNS 網域</th>
+                    <th>密鑰</th>
+                    <th>安裝指令</th>
+                    <th>備註</th>
+                    <th>管理</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $server := .Servers}}
+                <tr>
+                    <td><input type="checkbox" class="agent-servers" value="{{$server.ID}}" /></td>
+                    <td>{{$server.ID}} ({{$server.DisplayIndex}})</td>
+                    <td>{{$server.Name}}</td>
+                    <td>{{$server.Tag}}</td>
+                    <td>{{$server.Host.IP}}</td>
+                    <td>{{$server.Host.Version}}</td>
+                    <td>{{$server.HideForGuest}}</td>
+                    <td>{{$server.EnableDDNS}}</td>
+                    <td>{{$server.EnableIPv4}}</td>
+                    <td>{{$server.EnableIpv6}}</td>
+                    <td>{{$server.DDNSDomain}}</td>
+                    <td>
+                        <button class="ui icon green mini button" data-clipboard-text="{{$server.Secret}}" data-tooltip="點擊複製">
+                            <i class="copy icon"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="ui icon green mini button" data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh -o nezha.sh && chmod +x nezha.sh && ./nezha.sh install_agent {{$.Conf.GRPCHost}} {{if $.Conf.ProxyGRPCPort}}{{$.Conf.ProxyGRPCPort}}{{else}}{{$.Conf.GRPCPort}}{{end}} {{$server.Secret}}{{if $.Conf.TLS}} --tls{{end}}{{else}}請先在設定頁面配置 : 未接入 CDN 的面板伺服器域名 / IP{{end}}" data-tooltip="點擊複製">
+                            <i class="linux icon"></i>
+                        </button>
+                        <button class="ui icon green mini button" data-clipboard-text="{{if $.Conf.GRPCHost}}[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Ssl3 -bor [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12;set-ExecutionPolicy RemoteSigned;Invoke-WebRequest https://raw.githubusercontent.com/naiba/nezha/master/script/install.ps1 -OutFile C:\install.ps1;powershell.exe C:\install.ps1 {{$.Conf.GRPCHost}}:{{if $.Conf.ProxyGRPCPort}}{{$.Conf.ProxyGRPCPort}}{{else}}{{$.Conf.GRPCPort}}{{end}} {{$server.Secret}}{{if $.Conf.TLS}} --tls{{end}}{{else}}請先在設定頁面配置 : 未接入 CDN 的面板伺服器域名 / IP{{end}}" data-tooltip="點擊複製">
+                            <i class="windows icon"></i>
+                        </button>
+                        <button class="ui icon green mini button" data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.command -o nezha.command && chmod +x nezha.command && sudo ./nezha.command install_agent {{$.Conf.GRPCHost}} {{if $.Conf.ProxyGRPCPort}}{{$.Conf.ProxyGRPCPort}}{{else}}{{$.Conf.GRPCPort}}{{end}} {{$server.Secret}}{{if $.Conf.TLS}} --tls{{end}}{{else}}請先在設定頁面配置 : 未接入 CDN 的面板伺服器域名 / IP{{end}}" data-tooltip="點擊複製">
+                            <i class="apple icon"></i>
+                        </button>
+                    </td>
+                    <td style="word-break: break-word; white-space: pre-wrap;">{{$server.Note}}</td>
+                    <td>
+                        <div class="ui mini icon buttons">
+                            <button class="ui button" onclick="connectToServer({{$server.ID}})">
+                                <i class="terminal icon"></i>
+                            </button>
+                            <button class="ui button" onclick="addOrEditServer({{$server.Marshal}})">
+                                <i class="edit icon"></i>
+                            </button>
+                            <button class="ui button" onclick="showConfirm('刪除伺服器', '確認刪除此伺服器 ?', deleteRequest, '/api/server/' + {{$server.ID}})">
+                                <i class="trash alternate outline icon"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{template "dashboard-custom/component-server" .}}
+{{template "dashboard-custom/footer" .}}
+<script src="https://unpkg.com/clipboard@2.0.11/dist/clipboard.min.js"></script>
+<script>
+    var clipboard = new ClipboardJS('.ui.icon.green.mini.button');
+    const checkBoxList = document.querySelectorAll('tbody > tr > td > input.agent-servers[type=checkbox]');
+    function checkAllServer() {
+        checkBoxList.forEach(cb => {
+            cb.checked = true;
+        });
+    }
+    function forceUpdate() {
+        const servers = [];
+        checkBoxList.forEach(cb => {
+            if (cb.checked) {
+                servers.push(parseInt(cb.value));
+            }
+        });
+        if (servers.length === 0) {
+            $.suiAlert({
+                title: '目前沒有選取任何伺服器',
+                description: '',
+                type: 'warning',
+                time: '2',
+                position: 'top-center'
+            });
+            return;
+        }
+        $.post('/api/force-update', JSON.stringify(servers))
+                .then((resp) => {
+                    if (resp.code === 200) {
+                        $.suiAlert({
+                            title: '執行結果',
+                            description: resp.message,
+                            type: 'success',
+                            time: '3',
+                            position: 'top-center'
+                        });
+                    } else {
+                        $.suiAlert({
+                            title: '',
+                            description: resp.message,
+                            type: 'error',
+                            time: '3',
+                            position: 'top-center'
+                        });
+                    }
+                }).catch(err => {
+            $.suiAlert({
+                title: '',
+                description: err,
+                type: 'error',
+                time: '3',
+                position: 'top-center'
+            });
+        });
+    }
+    function batchEditServerGroup() {
+        let groupName = prompt('輸入群組名稱');
+        if (!groupName) {
+            return;
+        }
+        const servers = [];
+        checkBoxList.forEach(cb => {
+            if (cb.checked) {
+                servers.push(parseInt(cb.value));
+            }
+        });
+        if (servers.length === 0) {
+            $.suiAlert({
+                title: '目前沒有選取任何伺服器',
+                description: '',
+                type: 'warning',
+                time: '2',
+                position: 'top-center'
+            });
+            return;
+        }
+        $.post('/api/batch-update-server-group', JSON.stringify({
+            servers: servers,
+            group: groupName
+        })).then((resp) => {
+            if (resp.code === 200) {
+                $.suiAlert({
+                    title: '執行結果',
+                    description: translateResult(resp.message),
+                    type: 'success',
+                    time: '3',
+                    position: 'top-center'
+                });
+                window.location.reload();
+            } else {
+                $.suiAlert({
+                    title: '',
+                    description: resp.message,
+                    type: 'error',
+                    time: '3',
+                    position: 'top-center'
+                });
+            }
+        }).catch(err => {
+            $.suiAlert({
+                title: '',
+                description: err,
+                type: 'error',
+                time: '3',
+                position: 'top-center'
+            });
+        });
+    }
+    function batchDeleteServer() {
+        const servers = [];
+        checkBoxList.forEach(cb => {
+            if (cb.checked) {
+                servers.push(parseInt(cb.value));
+            }
+        });
+        if (servers.length === 0) {
+            $.suiAlert({
+                title: '目前沒有選取任何伺服器',
+                description: '',
+                type: 'warning',
+                time: '2',
+                position: 'top-center'
+            });
+            return;
+        }
+        showConfirm('刪除伺服器', '確認刪除所選伺服器 ?', () => postJson('/api/batch-delete-server', servers), '');
+    }
+
+    function translateResult(text) {
+        if (text.includes("下发指令成功")) {
+            return text.replaceAll("下发指令成功", "發送指令成功");
+        }
+        if (text.includes("离线")) {
+            return text.replaceAll("离线", "離線");
+        }
+        if (text.includes("下发指令失败")) {
+            return text.replaceAll("下发指令失败", "發送指令失敗");
+        }
+    }
+
+    $("#server-table > tbody > tr").each(function () {
+        let element = $(this).find("td:eq(4)").first();
+        let value = element.text();
+        element.text(value.replaceAll("/", " / "));
+    });
+</script>
+{{end}}

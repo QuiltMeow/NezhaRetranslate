@@ -1,0 +1,31 @@
+{{define "dashboard-custom/component-nat"}}
+<div class="ui tiny nat modal transition hidden">
+    <div class="header">新增</div>
+    <div class="content">
+        <form id="natForm" class="ui form">
+            <input type="hidden" name="ID">
+            <div class="field">
+                <label>名稱</label>
+                <input type="text" name="Name">
+            </div>
+            <div class="field">
+                <label>Agent ID</label>
+                <input type="number" name="ServerID" placeholder="1">
+            </div>
+            <div class="field">
+                <label>內網服務</label>
+                <input type="text" name="Host" placeholder="192.168.1.1:80 (含端口)">
+            </div>
+            <div class="field">
+                <label>綁定域名</label>
+                <input type="text" name="Domain" placeholder="router.app.domain.com">
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <div class="ui negative button">取消</div>
+        <button class="ui positive main-primary-btn right labeled icon button">確定 <i class="checkmark icon"></i>
+        </button>
+    </div>
+</div>
+{{end}}

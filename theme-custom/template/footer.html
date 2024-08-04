@@ -1,0 +1,40 @@
+{{define "theme-custom/footer"}}
+</div>
+<div class="ui inverted vertical footer segment">
+    <div class="ui center aligned is-size-7 container">
+        <b>&copy; <a style="color: white;" href="/">{{.Conf.Site.Brand}}</a></b>
+    </div>
+</div>
+{{if not .Conf.DisableSwitchTemplateInFrontend}}
+<script>
+    function showSwitchTemplate(list, currentBackendTheme) {
+    }
+    showSwitchTemplate({{.Themes}}, {{.Conf.Site.Theme}});
+</script>
+{{end}}
+<script src="https://probe.quilt.com.tw/dashboard/live2dw/lib/L2Dwidget.min.js"></script>
+<script>
+    L2Dwidget.init({
+        "pluginRootPath": "https://probe.quilt.com.tw/dashboard/live2dw/",
+        "pluginJsPath": "https://probe.quilt.com.tw/dashboard/live2dw/lib/",
+        "pluginModelPath": "https://probe.quilt.com.tw/dashboard/live2dw/assets/",
+        "tagMode": false,
+        "debug": false,
+        "model": {
+            "jsonPath": "https://probe.quilt.com.tw/dashboard/live2dw/assets/tororo.model.json"
+        },
+        "display": {
+            "position": "right",
+            "width": 150,
+            "height": 300
+        },
+        "mobile": {
+            "show": false
+        },
+        "log": false
+    });
+</script>
+</body>
+
+</html>
+{{end}}

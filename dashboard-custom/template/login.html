@@ -1,0 +1,20 @@
+{{define "dashboard-custom/login"}}
+{{template "dashboard-custom/header" .}}
+<div class="login nb-container">
+    <div class="ui center aligned grid">
+        <div class="column">
+            <h2 class="ui image header">
+                <img src="https://probe.quilt.com.tw/dashboard/logo.png" class="image" />
+                <div class="content">
+                    使用 {{.LoginType}} 帳號登入
+                </div>
+            </h2>
+            <a href="/oauth2/login" class="ui fluid large main-primary-btn submit button">登入</a>
+            <div class="ui message">
+                沒有帳號 ? <a href="{{.RegistrationLink}}" target="_blank" rel="noopener noreferrer">註冊</a>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "dashboard-custom/footer" .}}
+{{end}}

@@ -1,0 +1,142 @@
+{{define "dashboard-custom/setting"}}
+{{template "dashboard-custom/header" .}}
+{{template "dashboard-custom/menu" .}}
+<div class="nb-container">
+    <div class="ui container">
+        <form id="settingForm" class="ui large form" onsubmit="return false;">
+            <div class="field">
+                <label>網站標題</label>
+                <input type="text" name="Title" placeholder="探針面板" value="{{.Conf.Site.Brand}}">
+            </div>
+            <div class="field">
+                <label>管理員列表</label>
+                <input type="text" name="Admin" placeholder="管理員列表以逗號隔開 : 1010,2020" value="{{.Conf.Oauth2.Admin}}">
+            </div>
+            <div class="field">
+                <label>前臺介面主題</label>
+                <select id="theme" name="Theme">
+                    {{range $k,$v := .Themes}}
+                    <option value="{{$k}}" {{if eq $.Conf.Site.Theme $k}}selected="selected" {{end}}>{{$v}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="field">
+                <label>後臺介面主題</label>
+                <select id="dashboard-theme" name="DashboardTheme">
+                    {{range $k,$v := .DashboardThemes}}
+                    <option value="{{$k}}" {{if eq $.Conf.Site.DashboardTheme $k}}selected="selected" {{end}}>{{$v}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="field">
+                <label>語言</label>
+                <select name="Language">
+                    {{range $k,$v := .Languages}}
+                    <option value="{{$k}}" {{if eq $.Conf.Language $k}}selected="selected" {{end}}>
+                        {{$v}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="field">
+                <label>自訂程式碼 (包含 style 及 script)</label>
+                <textarea name="CustomCode">{{.Conf.Site.CustomCode}}</textarea>
+            </div>
+            <div class="field">
+                <label>前臺存取密碼</label>
+                <input type="text" name="ViewPassword" placeholder="" value="{{.Conf.Site.ViewPassword}}">
+            </div>
+            <div class="field">
+                <label>未接入 CDN 的面板伺服器域名 / IP</label>
+                <input type="text" name="GRPCHost" placeholder="" value="{{.Conf.GRPCHost}}">
+            </div>
+            <div class="field">
+                <label>IP 變更通知</label>
+            </div>
+            <div class="ui segment">
+                <div class="field">
+                    <label>覆蓋範圍</label>
+                    <select name="Cover" class="ui fluid dropdown">
+                        <option value=0>覆蓋所有，僅特定伺服器不提醒</option>
+                        <option value=1>忽略所有，僅提醒特定伺服器</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>特定伺服器</label>
+                    <input type="text" name="IgnoredIPNotification" placeholder="伺服器 ID 以逗號隔開 : 1001,1002,1003" value="{{.Conf.IgnoredIPNotification}}">
+                </div>
+                <div class="field">
+                    <label>將提醒發送至指定通知群組</label>
+                    <input type="text" name="IPChangeNotificationTag" placeholder="" value="{{.Conf.IPChangeNotificationTag}}">
+                </div>
+                <div class="field">
+                    <div class="ui checkbox ip-change">
+                        <input name="EnableIPChangeNotification" type="checkbox" tabindex="0" class="hidden">
+                        <label>啟用</label>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox plain-ip">
+                    <input name="EnablePlainIPInNotification" type="checkbox" tabindex="0" class="hidden">
+                    <label>通知訊息顯示完整 IP 位址</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox disable-switch-template">
+                    <input name="DisableSwitchTemplateInFrontend" type="checkbox" tabindex="0" class="hidden">
+                    <label>禁止前臺切換主題</label>
+                </div>
+            </div>
+            <button class="ui button" type="submit">儲存設定</button>
+        </form>
+    </div>
+</div>
+{{template "dashboard-custom/footer" .}}
+<script>
+    $('#settingForm').submit(function () {
+        $.post('/api/setting', $('#settingForm').serialize()).then((resp) => {
+            if (resp.code === 200) {
+                $.suiAlert({
+                    title: '',
+                    description: '修改成功',
+                    type: 'success',
+                    time: '3',
+                    position: 'top-center'
+                });
+                window.location.reload();
+            } else {
+                $.suiAlert({
+                    title: '',
+                    description: resp.message,
+                    type: 'error',
+                    time: '3',
+                    position: 'top-center'
+                });
+            }
+        }).catch(err => {
+            $.suiAlert({
+                title: '',
+                description: err,
+                type: 'error',
+                time: '3',
+                position: 'top-center'
+            });
+        });
+        return false;
+    });
+    $('.checkbox').checkbox();
+    $('#settingForm').find("select[name=Cover]").val({{.Conf.Cover}});
+    {{if .Conf.EnableIPChangeNotification}}
+    $('.checkbox.ip-change').checkbox('set checked');
+    {{end}}
+    {{if .Conf.EnablePlainIPInNotification}}
+    $('.checkbox.plain-ip').checkbox('set checked');
+    {{end}}
+    {{if .Conf.DisableSwitchTemplateInFrontend}}
+    $('.checkbox.disable-switch-template').checkbox('set checked');
+    {{end}}
+
+    $('#theme option:contains("Custom(local)")').html('自訂');
+    $('#dashboard-theme option:contains("Custom(local)")').html('自訂');
+</script>
+{{end}}

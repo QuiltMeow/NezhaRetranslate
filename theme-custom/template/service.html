@@ -1,0 +1,149 @@
+{{define "theme-custom/service"}}
+{{template "theme-custom/header" .}}
+{{if ts .CustomCode}}
+{{.CustomCode|safe}}
+{{end}}
+{{template "theme-custom/menu" .}}
+<div class="nb-container">
+    <div class="ui container">
+        <div class="service-status">
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th class="ui center aligned">名稱</th>
+                        <th class="ui center aligned">近 30 天可用性</th>
+                        <th class="ui center aligned">詳情</th>
+                        <th class="ui center aligned">狀態</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $service := .Services}}
+                    <tr>
+                        <td class="ui center aligned">{{$service.Monitor.Name}}</td>
+                        <td class="ui center aligned">
+                            {{$service.TotalUptime|float32f}} %
+                        </td>
+                        <td class="ui center aligned">{{range $i,$d := $service.Delay}}
+                            <div class="ui icon button {{className (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}" data-tooltip="{{dayBefore $i}}，可用性 : {{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}} %，平均回應時間 : {{float32f $d}} 毫秒">
+                            </div>
+                            {{end}}
+                        </td>
+                        <td class="ui center aligned delay-today">
+                            <i class="delay-today {{className (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}"></i>
+                            @#translateStatusName("{{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}")#@
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+
+            {{if .CycleTransferStats}}
+
+            <h2 style="text-align: center;">週期性流量統計</h2>
+
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th class="ui center aligned">ID</th>
+                        <th class="ui center aligned">規則</th>
+                        <th class="ui center aligned">主機</th>
+                        <th class="ui center aligned">起始</th>
+                        <th class="ui center aligned">結束</th>
+                        <th class="ui center aligned">最大</th>
+                        <th class="ui center aligned">最小</th>
+                        <th class="ui center aligned">下次檢查</th>
+                        <th class="ui center aligned">目前用量</th>
+                        <th class='ui center aligned' style='padding: 0px 31px 0px 31px;'>剩餘流量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $id, $stats := .CycleTransferStats}}
+                    {{range $innerId, $transfer := $stats.Transfer}}
+                    {{$TransLeftPercent := TransLeftPercent (UintToFloat $transfer) (UintToFloat $stats.Max)}}
+                    <tr>
+                        <td class="ui center aligned">{{$id}}</td>
+                        <td class="ui center aligned">{{$stats.Name}}</td>
+                        <td class="ui center aligned">{{index $stats.ServerName $innerId}}</td>
+                        <td class="ui center aligned">@#formatDateTime("{{$stats.From|tf}}")#@</td>
+                        <td class="ui center aligned">@#formatDateTime("{{$stats.To|tf}}")#@</td>
+                        <td class="ui center aligned">@#formatByteSize({{$stats.Max}})#@</td>
+                        <td class="ui center aligned">@#formatByteSize({{$stats.Min}})#@</td>
+                        <td class="ui center aligned">@#formatTime("{{(index $stats.NextUpdate $innerId)|sft}}")#@</td>
+                        <td class="ui center aligned">@#formatByteSize({{$transfer}})#@</td>
+                        <td class="ui center aligned" style="padding: 14px 0px 0px 0px; position: relative;">
+                            <div class="thirteen wide column">
+                                <div class="ui progress {{TransClassName $TransLeftPercent}}" style="background: rgba(0,0,0,.1); background-color: rgba(0,0,0,.1) !important; height: 25px;">
+                                    <div class="bar" style="transition-duration: 300ms; min-width: unset; background-color: rgb(10, 148, 242); width: {{$TransLeftPercent}}% !important;"></div><small style="position: relative; top: -2em;">@#formatSymbolByteSize("{{TransLeft $stats.Max $transfer}}")#@ / {{$TransLeftPercent}} %</small>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                    {{end}}
+                </tbody>
+            </table>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{template "theme-custom/footer" .}}
+<script>
+    new Vue({
+        el: '#app',
+        delimiters: ['@#', '#@'],
+        data: {
+            page: 'service',
+            defaultTemplate: {{.Conf.Site.Theme}},
+            templates: {{.Themes}}
+        },
+        mixins: [mixinsVue],
+        methods: {
+            translateStatusName(name) {
+                switch (name) {
+                    case "無數據": {
+                        return "無資料";
+                    }
+                    case "低可用": {
+                        return "低可用性";
+                    }
+                }
+                return name;
+            },
+            formatDateTime(date) {
+                let dateTimePattern = date.split(" ");
+                let datePattern = dateTimePattern[0].split("/");
+                let timePattern = dateTimePattern[1].split(":");
+                let hour = parseInt(timePattern[0]);
+                let meridiem = hour < 12 ? "上午" : "下午";
+                let displayHour = hour > 13 ? hour - 12 : hour;
+                if (displayHour < 10) {
+                    displayHour = "0" + displayHour;
+                }
+                return datePattern[2] + " / " + datePattern[0] + " / " + datePattern[1] + " " + meridiem + " " + displayHour + " : " + timePattern[1] + " : " + timePattern[2];
+            },
+            formatTime(time) {
+                return time.replaceAll("m", " 分 ").replaceAll("s", " 秒");
+            },
+            formatSymbolByteSize(bs) {
+                let symbol = bs[bs.length - 1];
+                if (symbol === "B") {
+                    return bs.replaceAll(symbol, " " + symbol);
+                }
+                return bs.replaceAll(symbol, " " + symbol + "iB");
+            },
+            formatByteSize(bs) {
+                const x = this.readableBytes(bs);
+                return !isNaN(x) && x !== undefined ? x : '0 B';
+            },
+            readableBytes(bytes) {
+                if (!bytes) {
+                    return '0 B';
+                }
+                const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                const sizes = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+                return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
+            }
+        }
+    });
+</script>
+{{end}}

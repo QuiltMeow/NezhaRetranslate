@@ -1,0 +1,40 @@
+{{define "dashboard-custom/api"}}
+{{template "dashboard-custom/header" .}}
+{{template "dashboard-custom/menu" .}}
+<div class="nb-container">
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="right floated right aligned twelve wide column">
+                <button class="ui right labeled main-primary-btn icon button" onclick="issueNewApiToken()"><i class="add icon"></i>
+                    新增 Token
+                </button>
+            </div>
+        </div>
+        <table class="ui very basic table">
+            <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>備註</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $token := .Tokens}}
+                <tr>
+                    <td>{{$token.Token}}</td>
+                    <td>{{$token.Note}}</td>
+                    <td>
+                        <div class="ui mini icon buttons">
+                            <button class="ui button" onclick="showConfirm('刪除 Token', '確認刪除此 Token ?', deleteRequest, '/api/token/' + {{$token.Token}})">
+                                <i class="trash alternate outline icon"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{template "dashboard-custom/component-api"}}
+{{template "dashboard-custom/footer" .}}
+{{end}}

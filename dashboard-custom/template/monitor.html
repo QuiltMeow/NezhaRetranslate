@@ -1,0 +1,72 @@
+{{define "dashboard-custom/monitor"}}
+{{template "dashboard-custom/header" .}}
+{{template "dashboard-custom/menu" .}}
+<div class="nb-container">
+  <div class="ui container">
+    <div class="ui grid">
+      <div class="right floated right aligned twelve wide column">
+        <button class="ui right labeled main-primary-btn icon button" onclick="addOrEditMonitor()">
+          <i class="add icon"></i> 新增服務監控
+        </button>
+      </div>
+    </div>
+    <table class="ui very basic table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名稱</th>
+          <th>目標</th>
+          <th>覆蓋範圍</th>
+          <th>特定伺服器</th>
+          <th>類型</th>
+          <th>請求間隔</th>
+          <th>通知方式群組</th>
+          <th>故障通知</th>
+          <th>延遲通知</th>
+          <th>啟用觸發工作</th>
+          <th>發生警報時觸發工作</th>
+          <th>回復時觸發工作</th>
+          <th>管理</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $monitor := .Monitors}}
+        <tr>
+          <td>{{$monitor.ID}}</td>
+          <td>{{$monitor.Name}}</td>
+          <td>{{$monitor.Target}}</td>
+          <td>{{if eq $monitor.Cover 0}}覆蓋所有{{else}}忽略所有{{end}}</td>
+          <td>{{$monitor.SkipServersRaw}}</td>
+          <td>
+            {{if eq $monitor.Type 1}}HTTP (S) / TLS 憑證{{else if eq $monitor.Type
+            2}}ICMP Ping{{else}}TCP 端口{{end}}
+          </td>
+          <td>{{$monitor.Duration}} 秒</td>
+          <td>{{$monitor.NotificationTag}}</td>
+          <td>{{$monitor.Notify}}</td>
+          <td>{{$monitor.LatencyNotify}}</td>
+          <td>{{$monitor.EnableTriggerTask}}</td>
+          <td>{{$monitor.FailTriggerTasksRaw}}</td>
+          <td>{{$monitor.RecoverTriggerTasksRaw}}</td>
+          <td>
+            <div class="ui mini icon buttons">
+              <button class="ui button" onclick="addOrEditMonitor({{$monitor}})">
+                <i class="edit icon"></i>
+              </button>
+              <button class="ui button" onclick="showConfirm('刪除服務', '確認刪除此服務 ?', deleteRequest, '/api/monitor/' + {{$monitor.ID}})">
+                <i class="trash alternate outline icon"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{template "dashboard-custom/component-monitor"}}
+{{template "dashboard-custom/footer" .}}
+<script>
+  $(".checkbox").checkbox();
+</script>
+{{end}}

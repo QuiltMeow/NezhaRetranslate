@@ -1,0 +1,61 @@
+{{define "dashboard-custom/component-notification"}}
+<div class="ui tiny notification modal transition hidden">
+    <div class="header">新增通知方式</div>
+    <div class="content">
+        <form id="notificationForm" class="ui form">
+            <input type="hidden" name="ID">
+            <div class="field">
+                <label>名稱</label>
+                <input type="text" name="Name">
+            </div>
+            <div class="field">
+                <label>群組</label>
+                <input type="text" name="Tag" placeholder="default">
+            </div>
+            <div class="field">
+                <label>URL</label>
+                <input type="text" name="URL">
+            </div>
+            <div class="field">
+                <label>請求方式</label>
+                <select name="RequestMethod" class="ui fluid dropdown">
+                    <option value="1">GET</option>
+                    <option value="2">POST</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>請求類型</label>
+                <select name="RequestType" class="ui fluid dropdown">
+                    <option value="1">JSON</option>
+                    <option value="2">FORM</option>
+                </select>
+            </div>
+            <div class="secret field">
+                <label>Header (標頭)</label>
+                <textarea name="RequestHeader" placeholder='{ "User-Agent": "Agent" }'></textarea>
+            </div>
+            <div class="secret field">
+                <label>Body (主體)</label>
+                <textarea name="RequestBody" placeholder='{&#13;&#10;  "content": "#AGENT#",&#13;&#10;  "serverName": "#SERVER.NAME#",&#13;&#10;  "serverIP": "#SERVER.IP#",&#13;&#10;  "serverIPv4": "#SERVER.IPV4#",&#13;&#10;  "serverIPv6": "#SERVER.IPV6#",&#13;&#10;  "cpu": "#SERVER.CPU#",&#13;&#10;  "memory": "#SERVER.MEM#",&#13;&#10;  "swap": "#SERVER.SWAP#",&#13;&#10;  "disk": "#SERVER.DISK#",&#13;&#10;  "netInSpeed": "#SERVER.NETINSPEED#",&#13;&#10;  "netOutSpeed": "#SERVER.NETOUTSPEED#",&#13;&#10;  "transferIn": "#SERVER.TRANSFERIN#",&#13;&#10;  "tranferOut": "#SERVER.TRANSFEROUT#",&#13;&#10;  "load1": "#SERVER.LOAD1#",&#13;&#10;  "load5": "#SERVER.LOAD5#",&#13;&#10;  "load15": "#SERVER.LOAD15#",&#13;&#10;  "tcpConnectionCount": "#SERVER.TCPCONNCOUNT",&#13;&#10;  "udpConnectionCount": "#SERVER.UDPCONNCOUNT"&#13;&#10;}'></textarea>
+            </div>
+            <div class="field">
+                <div class="ui nf-ssl checkbox">
+                    <input name="VerifySSL" type="checkbox" tabindex="0" class="hidden">
+                    <label>驗證 TLS</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui nf-skip-check checkbox">
+                    <input name="SkipCheck" type="checkbox" tabindex="0" class="hidden">
+                    <label>不發送測試訊息</label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <div class="ui negative button">取消</div>
+        <button class="ui positive main-primary-btn right labeled icon button">確定 <i class="checkmark icon"></i>
+        </button>
+    </div>
+</div>
+{{end}}

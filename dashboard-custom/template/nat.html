@@ -1,0 +1,52 @@
+{{define "dashboard-custom/nat"}}
+{{template "dashboard-custom/header" .}}
+{{template "dashboard-custom/menu" .}}
+<div class="nb-container">
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="right floated right aligned twelve wide column">
+                <button class="ui right labeled main-primary-btn icon button" onclick="addOrEditNAT()"><i class="add icon"></i> 新增 NAT 通道
+                </button>
+            </div>
+        </div>
+        <table class="ui very basic table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名稱</th>
+                    <th>Agent ID</th>
+                    <th>內網服務</th>
+                    <th>綁定域名</th>
+                    <th>管理</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $item := .NAT}}
+                <tr>
+                    <td>{{$item.ID}}</td>
+                    <td>{{$item.Name}}</td>
+                    <td>{{$item.ServerID}}</td>
+                    <td>{{$item.Host}}</td>
+                    <td>{{$item.Domain}}</td>
+                    <td>
+                        <div class="ui mini icon buttons">
+                            <button class="ui button" onclick="addOrEditNAT({{$item}})">
+                                <i class="edit icon"></i>
+                            </button>
+                            <button class="ui button" onclick="showConfirm('刪除 NAT 通道', '確認刪除此 NAT 通道 ?', deleteRequest, '/api/nat/' + {{$item.ID}})">
+                                <i class="trash alternate outline icon"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{template "dashboard-custom/component-nat"}}
+{{template "dashboard-custom/footer" .}}
+<script>
+    $('.checkbox').checkbox();
+</script>
+{{end}}

@@ -1,0 +1,116 @@
+{{define "dashboard-custom/component-monitor"}}
+<div class="ui tiny monitor modal transition hidden">
+  <div class="header">新增服務監視</div>
+  <div class="content">
+    <form id="monitorForm" class="ui form">
+      <input type="hidden" name="ID" />
+      <div class="field">
+        <label>名稱</label>
+        <input type="text" name="Name" placeholder="部落格" />
+      </div>
+      <div class="field">
+        <label>目標</label>
+        <input type="text" name="Target" placeholder="HTTP (https://domain.com)、Ping (domain.com)、TCP (domain.com:80)" />
+      </div>
+      <div class="field">
+        <label>類型</label>
+        <select name="Type" class="ui fluid dropdown">
+          <option value="1">HTTP - GET (含 TLS 到期、變更檢查)</option>
+          <option value="2">ICMP - Ping</option>
+          <option value="3">TCP - Ping</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="ui nb-show-in-service checkbox">
+          <input name="EnableShowInService" type="checkbox" tabindex="0" class="hidden" />
+          <label>於前臺服務顯示</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>請求間隔</label>
+        <input type="number" name="Duration" placeholder="單位 : 秒" />
+      </div>
+      <div class="field">
+        <label>覆蓋範圍</label>
+        <select name="Cover" class="ui fluid dropdown">
+          <option value="0">覆蓋所有，僅特定伺服器不請求</option>
+          <option value="1">忽略所有，僅透過特定伺服器請求</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>特定伺服器</label>
+        <div class="ui fluid multiple servers search selection dropdown">
+          <input type="hidden" name="SkipServersRaw" />
+          <i class="dropdown icon specificServer"></i>
+          <div class="default text">輸入 ID / 名稱以進行搜尋</div>
+          <div class="menu"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>通知方式群組</label>
+        <input type="text" name="NotificationTag" placeholder="default" />
+      </div>
+      <div class="field">
+        <div class="ui nb-notify checkbox">
+          <input name="Notify" type="checkbox" tabindex="0" class="hidden" />
+          <label>啟用故障通知</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>最大延遲 (毫秒)</label>
+        <input type="number" name="MaxLatency" placeholder="100.88" />
+      </div>
+      <div class="field">
+        <label>最小延遲 (毫秒)</label>
+        <input type="number" name="MinLatency" placeholder="100.88" />
+      </div>
+      <div class="field">
+        <div class="ui nb-lt-notify checkbox">
+          <input name="LatencyNotify" type="checkbox" tabindex="0" class="hidden" />
+          <label>啟用延遲通知</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="ui nb-EnableTriggerTask checkbox">
+          <input name="EnableTriggerTask" type="checkbox" tabindex="0" class="hidden" />
+          <label>啟用觸發工作</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>發生警報時觸發工作</label>
+        <div class="ui fluid multiple tasks search selection dropdown">
+          <input type="hidden" name="FailTriggerTasksRaw">
+          <i class="dropdown icon failTask"></i>
+          <div class="default text">輸入 ID / 名稱以進行搜尋</div>
+          <div class="menu"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>回復時觸發工作</label>
+        <div class="ui fluid multiple tasks search selection dropdown">
+          <input type="hidden" name="RecoverTriggerTasksRaw">
+          <i class="dropdown icon recoverTask"></i>
+          <div class="default text">輸入 ID / 名稱以進行搜尋</div>
+          <div class="menu"></div>
+        </div>
+      </div>
+
+    </form>
+    <div class="ui warning message">
+      <p>
+        類型為 <b>HTTP - GET</b> 時輸入 URL (含 http / https，使用 HTTPS 協定將檢查 TLS 憑證有效性)；<br>
+        類型為 <b>ICMP - Ping</b> 時輸入域名 / IP，不含端口號碼；<br>
+        類型為 <b>TCP - Ping</b> 時輸入域名 / IP + 端口號碼：domain.com:22
+      </p>
+    </div>
+  </div>
+  <div class="actions">
+    <div class="ui negative button">取消</div>
+    <button class="ui positive main-primary-btn right labeled icon button">
+      確定<i class="checkmark icon"></i>
+    </button>
+  </div>
+</div>
+{{end}}

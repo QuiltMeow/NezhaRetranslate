@@ -191,8 +191,7 @@
                         avgDelay = Math.round(monitorInfo.result[i].avg_delay[j]);
                         if (avgDelay > 0 && avgDelay < MaxTCPPingValue) {
                             data.push([monitorInfo.result[i].created_at[j], avgDelay]);
-                        }
-                        else {
+                        } else {
                             loss += 1;
                             datal.push({
                                 xAxis: monitorInfo.result[i].created_at[j],

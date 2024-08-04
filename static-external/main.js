@@ -211,7 +211,7 @@ function addOrEditNotification(notification) {
 
 function addOrEditNAT(nat) {
   const modal = $(".nat.modal");
-  modal.children(".header").text((nat ? LANG.Edit : LANG.Add) + LANG.NAT);
+  modal.children(".header").text((nat ? LANG.Edit : LANG.Add) + " " + LANG.NAT);
   modal.find(".main-primary-btn.button").html(nat ? LANG.Edit + ' <i class="edit icon"></i>' : LANG.Add + ' <i class="add icon"></i>');
   modal.find("input[name=ID]").val(nat ? nat.ID : null);
   modal.find("input[name=ServerID]").val(nat ? nat.ServerID : null);

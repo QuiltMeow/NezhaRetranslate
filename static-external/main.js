@@ -5,7 +5,7 @@ let LANG = {
   Notification: "通知方式",
   NAT: "NAT 通道",
   Server: "伺服器",
-  Monitor: "監視",
+  Monitor: "服務監視",
   Cron: "工作排程"
 };
 

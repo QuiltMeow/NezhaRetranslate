@@ -470,7 +470,7 @@
             },
             formatByteSize(bs) {
                 const x = this.readableBytes(bs);
-                return !isNaN(x) && x !== undefined ? x : '0 B';
+                return x !== undefined ? x : '0 B';
             },
             readableBytes(bytes) {
                 if (!bytes) {

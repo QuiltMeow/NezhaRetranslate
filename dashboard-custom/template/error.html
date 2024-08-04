@@ -26,6 +26,8 @@
     let error_message = document.getElementById("error-message");
     if (error_message.innerText.includes("该页面内容可能已着陆火星")) {
         error_message.innerText = "該頁面內容可能已著陸火星";
+    } else if (error_message.innerText.includes("訪問密碼錯誤")) {
+        error_message.innerText = "存取密碼錯誤";
     }
     let error_link = document.getElementById("error-link");
     if (error_link.innerText.includes("返回首页")) {

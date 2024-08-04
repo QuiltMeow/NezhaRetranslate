@@ -118,7 +118,7 @@
                     if (resp.code === 200) {
                         $.suiAlert({
                             title: '執行結果',
-                            description: resp.message,
+                            description: translateResult(resp.message),
                             type: 'success',
                             time: '3',
                             position: 'top-center'
@@ -170,7 +170,7 @@
             if (resp.code === 200) {
                 $.suiAlert({
                     title: '執行結果',
-                    description: translateResult(resp.message),
+                    description: resp.message,
                     type: 'success',
                     time: '3',
                     position: 'top-center'
